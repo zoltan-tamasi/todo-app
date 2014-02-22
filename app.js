@@ -46,11 +46,18 @@ app.post('/login', function(req, res) {
       req.session.regenerate(function() {
         req.session.user = user;
         req.session.success = 'Authenticated as ' + user.name;
-        res.redirect('');
+        res.end(JSON.stringify({
+          "success" : true,
+          "message" : "Authenticated",
+          "user" : user
+        }));
       });
     } else {
       req.session.error = 'Authentication failed, please check your ' + ' username and password.';
-      res.redirect('login');
+      res.end(JSON.stringify({
+        "success" : false,
+        "message" : "Authentication failed"
+      }));
     }
   });
 });
