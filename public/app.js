@@ -1,6 +1,26 @@
+function TodoViewModel(user) {
+  var self = this;
+  this.todos = ko.observableArray(user.todos);
+  this.addTodo = function() {
+    self.todos.push({
+      name : "New todo",
+      priority : 2
+    });
+  };
+  this.removeTodo = function(todo) {
+    this.todos.remove(todo);
+  }.bind(this);
+}
+
+function initTodoView(user) {
+  $("#content").html($("#todo-view").html());
+  ko.applyBindings(new TodoViewModel(user), document.getElementById("todo_collection"));
+}
+
 function loginUser(credentials) {
   $.post("/login", credentials, function(response) {
-      $("#content");
+      var responseObj = JSON.parse(response);
+      initTodoView(responseObj.user);
   });
 }
 

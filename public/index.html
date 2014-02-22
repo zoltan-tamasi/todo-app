@@ -10,9 +10,9 @@
 <body>
     <header>
         <h1>Todo application</h1>
-        <p>Please <button>login</button> or <button>register.</button></p>
     </header>
     <div id="content">
+        <p>Please <button>login</button> or <button>register.</button></p>
         <div>
             <input type="text" name="username" placeholder="E-Mail" data-bind="value: email"/>
         </div>
@@ -26,5 +26,24 @@
     <script type="text/javascript" src="/bower_components/jquery/src/jquery.js"></script>
     <script type="text/javascript" src="/bower_components/knockback/knockback-full-stack.js"></script>
     <script type="text/javascript" src="app.js"></script>
+    <script type="text/template" id="todo-view">
+        <h3>Your todos</h3>
+        <div id='todo_collection'>
+            <div data-bind="foreach: todos">
+                <p>
+                    <input data-bind="value: name, valueUpdate: 'keyup'" />
+                    <select data-bind="value: priority">
+                        <option value="1">Low prio</option>
+                        <option value="2">Mid prio</option>
+                        <option value="3">High prio</option>
+                    </select>
+                    <button data-bind="click: $parent.removeTodo">Remove</button>
+                </p>
+            </div>
+            <p>
+                <button data-bind="click: addTodo">Add</button>
+            </p>
+        </div>
+    </script>
 </body>
 </html>
