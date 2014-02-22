@@ -1,0 +1,22 @@
+{
+  "name": "Todo-application",
+  "version": "0.0.0",
+  "authors": [
+    "Zoltan Tamasi <tzoltan84@gmail.com>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "public/bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "backbone": ">=0.5.1",
+    "jquery": ">=2.1",
+    "knockback": "*"
+  }
+}
