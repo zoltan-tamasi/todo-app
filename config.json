@@ -1,0 +1,5 @@
+{
+	"DB_HOST" : "mongodb://ds033079.mongolab.com:33079/todo-app",
+	"DB_USER" : "zoltan_tamasi",
+	"DB_PASS" : "sylvain84"
+}
