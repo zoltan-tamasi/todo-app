@@ -18,7 +18,6 @@ app.configure(function() {
   app.use(express.cookieParser());
   app.use(express.bodyParser());
   app.use(express.session({ secret: 'keyboard cat' }));
-  app.use(app.router);
 });
 
 function authenticate(email, password, fn) {
@@ -26,7 +25,6 @@ function authenticate(email, password, fn) {
 
   users.findOne({ email : email }, function(err, user) {
     if (!user) return fn(new Error('cannot find user'));
-
     pass.hash(password, user.salt, function(err, hash) {
       if (err) return fn(err);
       if (hash == user.hash) return fn(null, user);
@@ -35,10 +33,6 @@ function authenticate(email, password, fn) {
 
   });
 }
-
-app.get("/", function(req, res) {
-  res.sendfile("form.html");
-});
 
 app.post('/login', function(req, res) {
   authenticate(req.body.email, req.body.password, function(err, user) {
@@ -68,7 +62,10 @@ app.post('/register', function(req, res) {
   users.findOne({ email : data.email}, function(err, user) {
     if (err) throw err;
     if (user) {
-      res.end("User with email already registered");
+      res.end(JSON.stringify({
+        success: false,
+        message: "User with email already registered"
+      }));
       return;
     }
     var salt = pass.getSalt();
@@ -78,67 +75,54 @@ app.post('/register', function(req, res) {
         username : data.username,
         email : data.email,
         hash: hash,
-        salt: salt
+        salt: salt,
+        todos: []
       }, function(err, user) {
         if (err) throw err;
-        res.end("User with name " + data.username + "registered");
+        res.end(JSON.stringify({
+          success: true,
+          message: "User with name " + data.username + "registered",
+          user: user
+        }));
       });
     });
   });
 });
 
-app.get("/api/user", function(req, res) {
-  var data = req.body;
-
-  users.findOne({ username : data.username }, function(err, user) {
-    
-  });
-});
-
-app.put("/api/user", function(req, res) {
-  var data = req.body;
-
-  users.insert(data, {safe: true}, function(err, records) {
-    if (err) throw err;
-    console.log("User added with id " + records[0]._id);
-  });
-  
-}); 
-
-app.get("/api/todos/:id", function(req, res) {
-  var id = parseInt(req.params.id);
-
-  users.findOne({ id : id }, function(err, user) {
-    if (err) throw err;
-    res.end(JSON.stringify(user.todos));
-  });
-});
-
-app.put("/api/todos/:id", function(req, res) {
+app.post("/api/todos", function(req, res) {
   var id = parseInt(req.params.id);
   var data = req.body;
 
-  if (!data.todos) {
-    res.end("Invalid format\n");
+  if (!req.session.user) {
+    res.end(JSON.stringify({
+      success: false,
+      message: "User not authenticated"
+    }));
   }
 
-  users.update({ id: id }, { $set: { todos: data.todos } }, function(err, count) {
-    if (err) throw err;
-    res.end(count ? "Todolist updated\n" : "User with given id not found\n");
-  });
-});
-
-app.post("/api/todos/:id", function(req, res) {
-  var id = parseInt(req.params.id);
-  var data = req.body;
-
-  if (!data.todo) {
-    res.end("Invalid format\n");
+  if (!data.todos || Object.prototype.toString.call(data.todos) !== '[object Array]') {
+    res.end(JSON.stringify({
+      success: false,
+      message: "Invalid format"
+    }));
   }
-  users.update({ id: id }, { $push: { todos: data.todo } }, function(err, count) {
+
+  var email = req.session.user.email;
+
+  users.update({ email: email }, { $set: { todos: data.todos } }, function(err, count) {
     if (err) throw err;
-    res.end(count ? "Todolist updated\n" : "User with given id not found\n");
+    if (count) {
+      res.end(JSON.stringify({
+        success: true,
+        message: "Todolist updated"
+      }));
+    } else {
+      res.end(JSON.stringify({
+        success: false,
+        message: "User not found"
+      }));
+    }
   });
 });
 
-app.listen(3000);
+app.listen(config.PORT || process.env.PORT || 3000);

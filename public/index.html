@@ -11,23 +11,14 @@
     <header>
         <h1>Todo application</h1>
     </header>
-    <div id="content">
-        <p>Please <button>login</button> or <button>register.</button></p>
-        <div>
-            <input type="text" name="username" placeholder="E-Mail" data-bind="value: email"/>
-        </div>
-        <div>
-            <input type="password" name="password" placeholder="Password" data-bind="value: password"/>
-        </div>
-        <div>
-            <button data-bind="click: login">Submit</button>
-        </div>
-    </div>
+
+    <div id="content"></div>
+
     <script type="text/javascript" src="/bower_components/jquery/src/jquery.js"></script>
     <script type="text/javascript" src="/bower_components/knockback/knockback-full-stack.js"></script>
-    <script type="text/javascript" src="app.js"></script>
     <script type="text/template" id="todo-view">
-        <h3>Your todos</h3>
+        <h3>Logged in as:</h3>
+        <p data-bind="text: username"></p>
         <div id='todo_collection'>
             <div data-bind="foreach: todos">
                 <p>
@@ -40,10 +31,40 @@
                     <button data-bind="click: $parent.removeTodo">Remove</button>
                 </p>
             </div>
+            <!-- ko if: message().length > 0-->
+                <p data-bind="text: message" style="color: red"></p>
+            <!-- /ko -->​
             <p>
                 <button data-bind="click: addTodo">Add</button>
+                <button data-bind="click: save">Save</button>
             </p>
         </div>
     </script>
+    <script type="text/template" id="login-reg-view">
+        <div id="login-reg-container">
+            <p>Please 
+                <button data-bind="click: setReg(false)">login</button>
+                or
+                <button data-bind="click: setReg(true)">register.</button>
+            </p>
+            <div>
+                <input type="text" name="username" placeholder="User name" 
+                    data-bind="value: username, visible: isReg"/>
+            </div>
+            <div>
+                <input type="text" name="email" placeholder="E-Mail" data-bind="value: email"/>
+            </div>
+            <div>
+                <input type="password" name="password" placeholder="Password" data-bind="value: password"/>
+            </div>
+            <!-- ko if: message().length > 0-->
+                <p data-bind="text: message" style="color: red"></p>
+            <!-- /ko -->​
+            <div>
+                <button data-bind="click: login, text: submitText"></button>
+            </div>
+        </div>
+    </script>
+    <script type="text/javascript" src="app.js"></script>
 </body>
 </html>
