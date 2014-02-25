@@ -17,9 +17,9 @@
     <script type="text/javascript" src="/bower_components/jquery/src/jquery.js"></script>
     <script type="text/javascript" src="/bower_components/knockout/knockout.js"></script>
     <script type="text/template" id="todo-view">
-        <h3>Logged in as:</h3>
-        <p data-bind="text: username"></p>
         <div id='todo_collection'>
+            <h3>Logged in as: <i data-bind="text: username"></i></h3>
+            
             <div data-bind="foreach: todos">
                 <p>
                     <input data-bind="value: name, valueUpdate: 'keyup'" />
