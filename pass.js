@@ -6,7 +6,6 @@ var iterations = 12000;
 
 exports.hash = function(pwd, salt, fn) {
   if (3 == arguments.length) {
-    debugger;
     crypto.pbkdf2(pwd, salt, iterations, len, function(err, hash) {
       fn(err, (new Buffer(hash, 'binary')).toString('base64'));
     });
