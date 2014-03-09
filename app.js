@@ -20,22 +20,8 @@ app.configure(function() {
   app.use(express.session({ secret: 'keyboard cat' }));
 });
 
-function authenticate(email, password, fn) {
-  if (!module.parent) console.log('authenticating %s:%s', email, password);
-
-  users.findOne({ email : email }, function(err, user) {
-    if (!user) return fn(new Error('cannot find user'));
-    pass.hash(password, user.salt, function(err, hash) {
-      if (err) return fn(err);
-      if (hash == user.hash) return fn(null, user);
-      fn(new Error('invalid password'));
-    });
-
-  });
-}
-
 app.post('/login', function(req, res) {
-  authenticate(req.body.email, req.body.password, function(err, user) {
+  pass.authenticate(req.body.email, req.body.password, users, function(err, user) {
     if (user) {
       req.session.regenerate(function() {
         req.session.user = user;
@@ -59,7 +45,7 @@ app.post('/login', function(req, res) {
 app.post('/register', function(req, res) {
   var data = req.body;
 
-  users.findOne({ email : data.email}, function(err, user) {
+  users.findOne({ email : data.email }, function(err, user) {
     if (err) throw err;
     if (user) {
       res.end(JSON.stringify({
