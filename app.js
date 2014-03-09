@@ -34,7 +34,7 @@ app.get('/api/session', function(req, res) {
   });
 });
 
-app.post('/register', function(req, res) {
+app.post('/api/user', function(req, res) {
   var data = req.body;
 
   users.findOne({ email : data.email }, function(err, user) {

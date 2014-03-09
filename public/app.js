@@ -75,7 +75,7 @@ function loginUser(credentials, context) {
 }
 
 function regUser(user, context) {
-  $.post("/register", user, function(response) {
+  $.post("/api/user", user, function(response) {
     var responseObj = JSON.parse(response);
     if (responseObj.success) {
       initTodoView(responseObj.user);  
