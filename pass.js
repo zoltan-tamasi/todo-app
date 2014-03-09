@@ -1,5 +1,7 @@
 var crypto = require('crypto');
 
+var users = require('./users').users;
+
 var len = 128;
 
 var iterations = 12000;
@@ -22,7 +24,7 @@ function hash(pwd, salt, fn) {
   }
 }; 
 
-exports.authenticate = function(email, password, users, fn) {
+exports.authenticate = function(email, password, fn) {
   console.log('authenticating %s:%s', email, password);
 
   users.findOne({ email : email }, function(err, user) {

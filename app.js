@@ -1,16 +1,8 @@
 var express = require('express');
-var mongo = require('mongodb');
-var monk = require('monk');
 
 var config = require('./config.json');
-var pass = require('./pass.js');
-
-var db = monk(config.DB_HOST, {
-  username : config.DB_USER,
-  password : config.DB_PASS
-});
-
-var users = db.get("users");
+var pass = require('./pass');
+var users = require('./users').users;
 
 var app = express();
 app.configure(function() {
@@ -20,8 +12,8 @@ app.configure(function() {
   app.use(express.session({ secret: 'keyboard cat' }));
 });
 
-app.post('/login', function(req, res) {
-  pass.authenticate(req.body.email, req.body.password, users, function(err, user) {
+app.get('/api/session', function(req, res) {
+  pass.authenticate(req.query.email, req.query.password, function(err, user) {
     if (user) {
       req.session.regenerate(function() {
         req.session.user = user;
