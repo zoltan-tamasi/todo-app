@@ -28,11 +28,11 @@ function TodoViewModel(user) {
   }
 }
 
-function LoginViewModel() {
+function LoginViewModel(isReg) {
   this.email = ko.observable("");
   this.password = ko.observable("");
   this.username = ko.observable("");
-  this.isReg = ko.observable(false);
+  this.isReg = ko.observable(isReg || false);
 
   this.message = ko.observable("");
 
@@ -66,9 +66,9 @@ function initTodoView(user) {
   ko.applyBindings(new TodoViewModel(user), document.getElementById("todo_collection"));
 }
 
-function initLoginRegView() {
+function initLoginRegView(isReg) {
   $("#content").html($("#login-reg-view").html());
-  ko.applyBindings(new LoginViewModel(), document.getElementById("login-reg-container"));
+  ko.applyBindings(new LoginViewModel(isReg), document.getElementById("login-reg-container"));
 }
 
 function loginUser(credentials, context) {
@@ -103,7 +103,7 @@ function regUser(user, context) {
     success: function(response) {
       var responseObj = JSON.parse(response);
       if (responseObj.success) {
-        initTodoView(responseObj.user);  
+        initLoginRegView(false);  
       } else {
         context.message(responseObj.message);
       }
@@ -125,4 +125,4 @@ function saveUserTodos(todos, context) {
   });
 }
 
-initLoginRegView();
+initLoginRegView(true);

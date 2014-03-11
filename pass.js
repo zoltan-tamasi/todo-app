@@ -16,6 +16,7 @@ function hash(pwd, salt, fn) {
     crypto.randomBytes(len, function(err, salt) {
       if (err) return fn(err);
       salt = salt.toString('base64');
+      debugger;
       crypto.pbkdf2(pwd, salt, iterations, len, function(err, hash){
         if (err) return fn(err);
         fn(null, salt, (new Buffer(hash, 'binary')).toString('base64'));
@@ -42,6 +43,7 @@ exports.getSalt = function() {
 }
 
 exports.restrict = function(req, res, next) {
+  debugger;
   if (req.session.user) {
     next();
   } else {
