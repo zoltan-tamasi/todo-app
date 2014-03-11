@@ -67,7 +67,9 @@ function loginUser(credentials, context) {
   $.get("/api/session", credentials, function(response) {
     var responseObj = JSON.parse(response);
     if (responseObj.success) {
-      initTodoView(responseObj.user);  
+      $.get("/api/user", credentials, function(response) {
+        initTodoView(responseObj.user);  
+      });
     } else {
       context.message(responseObj.message);
     }

@@ -21,7 +21,6 @@ app.get('/api/session', function(req, res) {
         res.end(JSON.stringify({
           "success" : true,
           "message" : "Authenticated",
-          "user" : user
         }));
       });
     } else {
@@ -32,6 +31,12 @@ app.get('/api/session', function(req, res) {
       }));
     }
   });
+});
+
+app.get('/api/user', pass.restrict, function(req, res) {
+  res.end(JSON.stringify({
+    "user" : req.session.user
+  }));
 });
 
 app.post('/api/user', function(req, res) {
@@ -59,24 +64,15 @@ app.post('/api/user', function(req, res) {
         if (err) throw err;
         res.end(JSON.stringify({
           success: true,
-          message: "User with name " + data.username + "registered",
-          user: user
+          message: "User with name " + data.username + " registered",
         }));
       });
     });
   });
 });
 
-app.post("/api/todos", function(req, res) {
-  var id = parseInt(req.params.id);
+app.post("/api/todos", pass.restrict, function(req, res) {
   var data = req.body;
-
-  if (!req.session.user) {
-    res.end(JSON.stringify({
-      success: false,
-      message: "User not authenticated"
-    }));
-  }
 
   if (!data.todos || Object.prototype.toString.call(data.todos) !== '[object Array]') {
     res.end(JSON.stringify({

@@ -41,4 +41,15 @@ exports.getSalt = function() {
   return crypto.randomBytes(48).toString('hex');
 }
 
+exports.restrict = function(req, res, next) {
+  if (req.session.user) {
+    next();
+  } else {
+    res.end(JSON.stringify({
+      success: false,
+      message: "User not authenticated"
+    }));
+  }
+}
+
 exports.hash = hash;
