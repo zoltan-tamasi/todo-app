@@ -18,6 +18,14 @@ function TodoViewModel(user) {
   this.save = function() {
     saveUserTodos(this.todos(), this);
   }.bind(this);
+
+  this.logout = function() {
+    $.ajax({
+      url: "/api/session",
+      success: initLoginRegView,
+      type: "DELETE"
+    });
+  }
 }
 
 function LoginViewModel() {
@@ -64,34 +72,57 @@ function initLoginRegView() {
 }
 
 function loginUser(credentials, context) {
-  $.get("/api/session", credentials, function(response) {
-    var responseObj = JSON.parse(response);
-    if (responseObj.success) {
-      $.get("/api/user", credentials, function(response) {
-        initTodoView(responseObj.user);  
-      });
-    } else {
-      context.message(responseObj.message);
+  $.ajax({
+    url: "/api/session",
+    type: "GET",
+    data: credentials,
+    success: function(response) {
+      var responseObj = JSON.parse(response);
+      if (responseObj.success) {
+        $.ajax({
+          url: "/api/user",
+          data: JSON.stringify(credentials),
+          success: function(response) {
+            responseObj = JSON.parse(response);
+            initTodoView(responseObj.user);  
+          },
+          contentType: 'application/json; charset=utf-8'
+        });      
+      } else {
+        context.message(responseObj.message);
+      }
     }
   });
 }
 
 function regUser(user, context) {
-  $.post("/api/user", user, function(response) {
-    var responseObj = JSON.parse(response);
-    if (responseObj.success) {
-      initTodoView(responseObj.user);  
-    } else {
-      context.message(responseObj.message);
-    }
-  }); 
+  $.ajax({
+    url: "/api/user",
+    type: "POST",
+    data: JSON.stringify(user),
+    success: function(response) {
+      var responseObj = JSON.parse(response);
+      if (responseObj.success) {
+        initTodoView(responseObj.user);  
+      } else {
+        context.message(responseObj.message);
+      }
+    },
+    contentType: 'application/json; charset=utf-8'
+  });
 }
 
 function saveUserTodos(todos, context) {
-  $.post("/api/todos", { todos : todos }, function(response) {
-    var responseObj = JSON.parse(response);
-    context.message(responseObj.message);
-  });  
+  $.ajax({
+    url: "/api/todos",
+    type: "POST",
+    data: JSON.stringify({ todos : todos }),
+    success: function(response) {
+      var responseObj = JSON.parse(response);
+      context.message(responseObj.message);
+    },
+    contentType: 'application/json; charset=utf-8'
+  });
 }
 
 initLoginRegView();

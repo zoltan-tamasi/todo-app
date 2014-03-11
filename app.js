@@ -33,6 +33,14 @@ app.get('/api/session', function(req, res) {
   });
 });
 
+app.delete("/api/session", function(req, res) {
+  req.session.destroy();
+  res.end(JSON.stringify({
+    "success" : true,
+    "message" : "Logged out"
+  }));
+});
+
 app.get('/api/user', pass.restrict, function(req, res) {
   res.end(JSON.stringify({
     "user" : req.session.user
@@ -73,12 +81,12 @@ app.post('/api/user', function(req, res) {
 
 app.post("/api/todos", pass.restrict, function(req, res) {
   var data = req.body;
-
   if (!data.todos || Object.prototype.toString.call(data.todos) !== '[object Array]') {
     res.end(JSON.stringify({
       success: false,
       message: "Invalid format"
     }));
+    return;
   }
 
   var email = req.session.user.email;
@@ -98,5 +106,7 @@ app.post("/api/todos", pass.restrict, function(req, res) {
     }
   });
 });
+
+
 
 app.listen(config.PORT || process.env.PORT || 3000);
