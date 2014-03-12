@@ -3,7 +3,13 @@ var pass = require('../pass');
 
 exports.get = function(req, res) {
   res.end(JSON.stringify({
-    "user" : req.session.user
+    "user" : (function() {
+      return {
+        username : req.session.user.username,
+        email : req.session.user.email,
+        todos : req.session.user.todos
+      }
+    })()
   }));
 };
 
